@@ -40,8 +40,8 @@ logger = logging.getLogger()
 
 # Inicializar el modelo y la memoria
 try:
-    modelo = os.getenv('LLM_MODEL')
-    temperature = float(os.getenv('LLM_TEMPERATURE'))
+    modelo = 'llama3'
+    temperature = 0.0
     llm = Ollama(model=modelo, temperature=temperature)
 except Exception as e:
     logger.error(f'Error al cargar el modelo: {e}')
