@@ -2,7 +2,7 @@
 # Script para la descarga del modelo de OLLAMA e instalacion de la libreria.
 
 # Cargamos variables de entorno
-export PROJECT_ROOT=/content/tfm-oepia
+export PROJECT_ROOT=/content/tfm-oepia2
 export HF_HUB_DISABLE_SYMLINKS_WARNING=1
 export KMP_DUPLICATE_LIB_OK=TRUE
 export PYTHONUNBUFFERED=1
