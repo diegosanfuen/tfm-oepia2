@@ -37,8 +37,8 @@ logger = logging.getLogger()
 
 # Inicializar el modelo y la memoria
 try:
-    modelo = os.getenv('LLM_MODEL')
-    temperature = float(os.getenv('LLM_TEMPERATURE'))
+    modelo = os.getenv('LLM_MODEL', 'default_model')  # Valor por defecto si no está definido
+    temperature = float(os.getenv('LLM_TEMPERATURE', 0.7))  # Valor por defecto si no está definido
     llm = Ollama(model=modelo, temperature=temperature)
 except Exception as e:
     logger.error(f'Error al cargar el modelo: {e}')
@@ -149,7 +149,7 @@ def interact(user_input):
     elif "usa el agente para" in user_input.lower():
         try:
             response = agent_executor.run(user_input + " " + str(sesiones.obtener_mensajes_por_sesion(token)))
-            answer = str(response['answer'])
+            answer = str(response)
             sesiones.add_mensajes_por_sesion(token, user_input)
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
@@ -157,8 +157,8 @@ def interact(user_input):
             logger.error(f'Error al invocar el LLM: {e}')
     else:
         try:
-            response = llmApp.invoke({"input": user_input, "context": str(sesiones.obtener_mensajes_por_sesion(token))})
-            answer = str(response['answer'])
+            response = llmApp.invoke({"input": user_input, "history": memory.load_memory_variables(token)["history"]})
+            answer = str(response)
             sesiones.add_mensajes_por_sesion(token, user_input)
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
@@ -181,7 +181,7 @@ def interactuar_con_llm(texto, historial_previo):
     global history
     historial_previo = historial_previo + str(history)
     texto_limpio = texto.strip()
-    respuesta = chat(texto_limpio)
+    respuesta = interact(texto_limpio)
 
     html_wrapper = f"""
     <div class="container">
