@@ -61,13 +61,7 @@ memory = ConversationBufferMemory(memory_key="history", return_messages=True)
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
 
 # Crear la cadena de conversación con memoria usando RunnableSequence
-conversation_chain = RunnableSequence(
-    steps=[
-        prompt_template,
-        llm,
-        memory
-    ]
-)
+conversation_chain = prompt_template | llm | memory
 
 
 # Herramienta personalizada
