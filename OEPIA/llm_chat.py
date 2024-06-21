@@ -9,13 +9,14 @@ from dotenv import load_dotenv
 import gradio as gr
 from typing import Sequence, Any
 from langchain_community.llms import Ollama
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.agents import Tool, Agent, AgentOutputParser, AgentExecutor
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.tools.base import BaseTool
 from langchain.prompts.prompt import PromptTemplate
+from langchain.schema.prompt_template import BasePromptTemplate  # Asegúrate de importar esto
 
 # Cargamos las variables de entorno
 load_dotenv()
