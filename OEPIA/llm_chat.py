@@ -114,7 +114,7 @@ SUFIJO = """
     \nEres un sistema inteligente realizando una serie de pensamientos y ejecutando acciones para poder responder la pregunta del usuario.
     Pero es importante que sólo debes de usar este agente, cuando te solicitan o detectas que hay que descargar un BOE o un BOCYL.
     Cada acción es una llamada a una función: ObtenerTextBOE(url: str): str
-    Por favor, entrega la respuesta sin usar caracteres que puedan causar problemas de parsing como comillas dobles o comillas simples o comas.
+    Por favor, entrega la respuesta sin usar caracteres que puedan causar problemas de parsing como comillas dobles o comas.
     Puedes usar la función cuando consideres necesario. Cada acción se realiza por separado. Contesta siempre en castellano. 
     Después sigue procesando la petición del usuario con las demás ordenes
 
@@ -214,8 +214,8 @@ def interact(user_input):
 
     return answer
 
-
 # Definir la interfaz de Gradio
+
 with gr.Blocks() as iface:
     with gr.Row():
         texto_entrada = gr.Textbox(label="Ingresa tu mensaje", placeholder="Escribe aquí...", lines=10)
