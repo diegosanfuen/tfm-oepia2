@@ -7,13 +7,13 @@ from langchain.prompts import ChatPromptTemplate
 import logging
 import gradio as gr
 from dotenv import load_dotenv
-from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
 from langchain.agents import Tool, Agent, AgentExecutor
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.tools.base import BaseTool
 from langchain.schema.prompt_template import BasePromptTemplate
 from typing import Sequence, Any
+from langchain.schema.runnable import RunnableSequence
 
 # Cargar variables de entorno
 load_dotenv()
@@ -60,11 +60,13 @@ memory = ConversationBufferMemory(memory_key="history", return_messages=True)
 # Crear la plantilla del prompt
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
 
-# Crear la cadena de conversación con memoria
-conversation_chain = LLMChain(
-    llm=llm,
-    prompt=prompt_template,
-    memory=memory
+# Crear la cadena de conversación con memoria usando RunnableSequence
+conversation_chain = RunnableSequence(
+    steps=[
+        prompt_template,
+        llm,
+        memory
+    ]
 )
 
 
@@ -87,7 +89,7 @@ HERRAMIENTAS = [
 # Clase personalizada del agente ReAct
 class ReActAgent(Agent):
     @classmethod
-    def _get_default_output_parser(cls, **kwargs: Any) -> AgentOutputParser:
+    def _get_default_output_parser(cls, **kwargs: Any) -> ReActOutputParser:
         return ReActOutputParser()
 
     @classmethod
