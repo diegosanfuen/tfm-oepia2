@@ -216,6 +216,20 @@ def interact(user_input):
 
 # Definir la interfaz de Gradio
 
+import re
+def format_links(text):
+    """
+    Convierte URLs en texto en enlaces HTML clicables.
+
+    Args:
+        text (str): Texto que puede contener URLs.
+
+    Returns:
+        str: Texto con URLs convertidas en etiquetas <a> HTML.
+    """
+    url_pattern = r'https?://[^\s]+'
+    return re.sub(url_pattern, lambda x: f'<a href="{x.group()}" target="_blank">{x.group()}</a>', text)
+
 with gr.Blocks() as iface:
     with gr.Row():
         texto_entrada = gr.Textbox(label="Ingresa tu mensaje", placeholder="Escribe aquí...", lines=10)
