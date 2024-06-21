@@ -79,6 +79,57 @@ HERRAMIENTAS = [
     )
 ]
 
+# El sufijo y los ejemplos para la activación de las herramientas
+AGENTE_FEW_SHOT_EJEMPLOS = [
+    """
+    Question: ¿Obtén el BOE del enlace que te paso?
+    Thought: Necesito localizar la url proporcionada por el usuario, la localizamos y es 
+    https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf
+    Action: ObtenerTextBOE["https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf"]
+    Observation: "texto del BOE": Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ....    
+    Action: Finish["El BOE contiene: Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ...."]
+    """
+]
+
+AGENTE_FEW_SHOT_EJEMPLOS.extend([
+    """
+    Question: Descarga el BOE del texto anterior
+    Thought: Necesito localizar del contexto la url proporcionada por el usuario, la localizamos y es 
+    https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf
+    Action: ObtenerTextBOE["https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf"]
+    Observation: "texto del BOE": Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ....    
+    Action: Finish["El BOE contiene: Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ...."]
+""",
+    """
+    Question: Descarga el enlace al documento proporcionado 
+    Thought: Necesito localizar la url proporcionada por el usuario, la localizamos y es 
+    https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf
+    Action: ObtenerTextBOE["https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf"]
+    Observation: "texto del BOE": Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ....    
+    Action: Finish["El BOE contiene: Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ...."]
+    """,
+])
+
+SUFIJO = """
+    \nEres un sistema inteligente realizando una serie de pensamientos y ejecutando acciones para poder responder la pregunta del usuario.
+    Pero es importante que sólo debes de usar este agente, cuando te solicitan o detectas que hay que descargar un BOE o un BOCYL.
+    Cada acción es una llamada a una función: ObtenerTextBOE(url: str): str
+    Por favor, entrega la respuesta sin usar caracteres que puedan causar problemas de parsing como comillas dobles o comillas simples o comas.
+    Puedes usar la función cuando consideres necesario. Cada acción se realiza por separado. Contesta siempre en castellano. 
+    Después sigue procesando la petición del usuario con las demás ordenes
+
+    Vamos a empezar
+
+    Question: {input}
+    {agent_scratchpad}
+"""
+
+PROMPT_AGENTE = PromptTemplate.from_examples(
+    examples=AGENTE_FEW_SHOT_EJEMPLOS,
+    suffix=SUFIJO,
+    input_variables=["input", "agent_scratchpad"],
+)
+
 
 # Clase personalizada del agente ReAct
 class ReActAgent(Agent):
