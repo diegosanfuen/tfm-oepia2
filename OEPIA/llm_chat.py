@@ -3,7 +3,7 @@ from pathlib import Path
 import os, yaml
 import datetime
 from langchain_community.llms import Ollama
-from langchain.prompts import ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate, PromptTemplate
 import logging
 import gradio as gr
 from dotenv import load_dotenv
@@ -180,7 +180,7 @@ agent_executor = AgentExecutor.from_agent_and_tools(
 )
 
 # Crear el chain final combinando la cadena de conversación y el agente
-llmApp = conversation_chain | agent_executor
+llmApp = RunnableSequence(conversation_chain, agent_executor)
 
 
 # Función para interactuar con el modelo y mantener la sesión
@@ -257,7 +257,7 @@ iface = gr.Interface(
     title="<img src ='https://diegosanfuen.github.io/staticsTFM/logo/logo.png' />OEPIA: La IA especializada en ofertas de Empleo Público",
     description="Escribe un mensaje y presiona 'Submit' para interactuar con el modelo de lenguaje.",
     live=False,
-    css=CSS,
+    css=utls.obtenerCSSOEPIAInterfaz(),
     article=utls.obtener_ayuda_oepia(),
     thumbnail=True,
     allow_flagging="manual",
