@@ -1,5 +1,5 @@
 # Ruta base
-ruta_base: "/content/tfm-oepia" # Ruta base del proyecto
+ruta_base: "/content/tfm-oepia2" # Ruta base del proyecto
 
 # Configuracion de los Logs
 logs_config:
