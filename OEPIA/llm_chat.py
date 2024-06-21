@@ -3,17 +3,20 @@ from pathlib import Path
 import os, yaml
 import datetime
 from langchain_community.llms import Ollama
-from langchain.prompts import ChatPromptTemplate, PromptTemplate
+from langchain.prompts import ChatPromptTemplate
 import logging
 import gradio as gr
 from dotenv import load_dotenv
+from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
 from langchain.agents import Tool, Agent, AgentExecutor
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.tools.base import BaseTool
 from langchain.schema.prompt_template import BasePromptTemplate
 from typing import Sequence, Any
-from langchain.schema.runnable import RunnableSequence
+
+# Definir la variable history
+history = ""
 
 # Cargar variables de entorno
 load_dotenv()
@@ -37,8 +40,8 @@ logger = logging.getLogger()
 
 # Inicializar el modelo y la memoria
 try:
-    modelo = os.getenv('LLM_MODEL', 'default_model')  # Valor por defecto si no está definido
-    temperature = float(os.getenv('LLM_TEMPERATURE', 0.7))  # Valor por defecto si no está definido
+    modelo = os.getenv('LLM_MODEL')
+    temperature = float(os.getenv('LLM_TEMPERATURE'))
     llm = Ollama(model=modelo, temperature=temperature)
 except Exception as e:
     logger.error(f'Error al cargar el modelo: {e}')
@@ -60,8 +63,8 @@ memory = ConversationBufferMemory(memory_key="history", return_messages=True)
 # Crear la plantilla del prompt
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
 
-# Crear la cadena de conversación con memoria usando RunnableSequence
-conversation_chain = RunnableSequence(prompt_template | llm)
+# Crear la cadena de conversación con memoria
+conversation_chain = prompt_template | llm | memory
 
 
 # Herramienta personalizada
@@ -78,57 +81,6 @@ HERRAMIENTAS = [
         description="Obtiene el texto del BOE desde una URL."
     )
 ]
-
-# El sufijo y los ejemplos para la activación de las herramientas
-AGENTE_FEW_SHOT_EJEMPLOS = [
-    """
-    Question: ¿Obtén el BOE del enlace que te paso?
-    Thought: Necesito localizar la url proporcionada por el usuario, la localizamos y es 
-    https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf
-    Action: ObtenerTextBOE["https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf"]
-    Observation: "texto del BOE": Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ....    
-    Action: Finish["El BOE contiene: Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ...."]
-    """
-]
-
-AGENTE_FEW_SHOT_EJEMPLOS.extend([
-    """
-    Question: Descarga el BOE del texto anterior
-    Thought: Necesito localizar del contexto la url proporcionada por el usuario, la localizamos y es 
-    https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf
-    Action: ObtenerTextBOE["https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf"]
-    Observation: "texto del BOE": Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ....    
-    Action: Finish["El BOE contiene: Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ...."]
-""",
-    """
-    Question: Descarga el enlace al documento proporcionado 
-    Thought: Necesito localizar la url proporcionada por el usuario, la localizamos y es 
-    https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf
-    Action: ObtenerTextBOE["https://www.boe.es/boe/dias/2024/05/02/pdfs/BOE-A-2024-8838.pdf"]
-    Observation: "texto del BOE": Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ....    
-    Action: Finish["El BOE contiene: Resolución de 25 de abril de 2024, del Instituto de la Cinematografía y ...."]
-    """,
-])
-
-SUFIJO = """
-    \nEres un sistema inteligente realizando una serie de pensamientos y ejecutando acciones para poder responder la pregunta del usuario.
-    Pero es importante que sólo debes de usar este agente, cuando te solicitan o detectas que hay que descargar un BOE o un BOCYL.
-    Cada acción es una llamada a una función: ObtenerTextBOE(url: str): str
-    Por favor, entrega la respuesta sin usar caracteres que puedan causar problemas de parsing como comillas dobles o comas.
-    Puedes usar la función cuando consideres necesario. Cada acción se realiza por separado. Contesta siempre en castellano. 
-    Después sigue procesando la petición del usuario con las demás ordenes
-
-    Vamos a empezar
-
-    Question: {input}
-    {agent_scratchpad}
-"""
-
-PROMPT_AGENTE = PromptTemplate.from_examples(
-    examples=AGENTE_FEW_SHOT_EJEMPLOS,
-    suffix=SUFIJO,
-    input_variables=["input", "agent_scratchpad"],
-)
 
 
 # Clase personalizada del agente ReAct
@@ -180,12 +132,13 @@ agent_executor = AgentExecutor.from_agent_and_tools(
 )
 
 # Crear el chain final combinando la cadena de conversación y el agente
-llmApp = RunnableSequence(conversation_chain, agent_executor)
+llmApp = conversation_chain | agent_executor
 
 
 # Función para interactuar con el modelo y mantener la sesión
 def interact(user_input):
     global token
+    global history
     answer = "<h1>SE PRODUJO UN ERROR</h1>"
 
     if "@resetear_sesion" in user_input.lower():
@@ -196,7 +149,7 @@ def interact(user_input):
     elif "usa el agente para" in user_input.lower():
         try:
             response = agent_executor.run(user_input + " " + str(sesiones.obtener_mensajes_por_sesion(token)))
-            answer = str(response)
+            answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, user_input)
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
@@ -204,8 +157,8 @@ def interact(user_input):
             logger.error(f'Error al invocar el LLM: {e}')
     else:
         try:
-            response = llmApp.invoke({"input": user_input, "history": memory.load_memory_variables(token)["history"]})
-            answer = str(response)
+            response = llmApp.invoke({"input": user_input, "context": str(sesiones.obtener_mensajes_por_sesion(token))})
+            answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, user_input)
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
@@ -214,27 +167,18 @@ def interact(user_input):
 
     return answer
 
-# Definir la interfaz de Gradio
 
-import re
+# Definir la función para formatear enlaces
 def format_links(text):
-    """
-    Convierte URLs en texto en enlaces HTML clicables.
-
-    Args:
-        text (str): Texto que puede contener URLs.
-
-    Returns:
-        str: Texto con URLs convertidas en etiquetas <a> HTML.
-    """
     url_pattern = r'https?://[^\s]+'
     return re.sub(url_pattern, lambda x: f'<a href="{x.group()}" target="_blank">{x.group()}</a>', text)
 
+
+# Definir la interfaz de Gradio
 with gr.Blocks() as iface:
     with gr.Row():
         texto_entrada = gr.Textbox(label="Ingresa tu mensaje", placeholder="Escribe aquí...", lines=10)
         historial_previo = gr.Textbox(label="Historial", value="", visible=False)
-
     texto_entrada.change(fn=format_links, inputs=texto_entrada, outputs=historial_previo)
 
 
