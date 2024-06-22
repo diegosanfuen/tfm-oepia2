@@ -21,7 +21,8 @@ from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.tools.base import BaseTool
 from langchain.schema.prompt_template import BasePromptTemplate
 from langchain.prompts.prompt import PromptTemplate
-from langchain.agents import AgentExecutor
+from langchain.agents import AgentExecutor, MyAgent
+from langchain.memory import SimpleMemory
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 # Introducir esta variable de entorno en el lanzador
@@ -32,6 +33,9 @@ from Sesiones.sesiones import ManejadorSesiones as ses
 from FaissOPEIA import carga as fcg
 from OEPIA.Utiles import Prompts as prompts
 from OEPIA.Utiles import Utiles as utls
+
+# Memoria del agente
+memory = SimpleMemory()
 
 # Herramienta del Agente PDF
 obtener_boe_texto = utls.obtener_boe_texto
@@ -249,8 +253,8 @@ class ReActAgent(Agent):
 # Creamos una instancia de nuestro agente
 agent = ReActAgent.from_llm_and_tools(
     llm,
-    HERRAMIENTAS,
 )
+
 # Definimos el agente ejecutor
 agent_executor = AgentExecutor.from_agent_and_tools(
     agent=agent,
@@ -259,6 +263,7 @@ agent_executor = AgentExecutor.from_agent_and_tools(
     handle_parsing_errors=True,
     max_iterations=config['agentePDF']['n_reintentos'],
     return_messages=True,
+    memory=memory,
 )
 
 # Creamos el chain final
