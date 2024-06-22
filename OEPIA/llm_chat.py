@@ -24,6 +24,7 @@ from langchain.tools import Tool
 from langchain.memory import ConversationBufferMemory
 from langchain.memory import SimpleMemory
 from typing import Any, Sequence
+from langchain.messages import SystemMessage, HumanMessage, AIMessage
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 
