@@ -315,12 +315,13 @@ def chat(pregunta):
 
     else:
         try:
-            if len(sesiones.obtener_mensajes_por_sesion(token)) != 0:
-                response = llmApp.invoke({"input": pregunta,
-                                          "context": str(sesiones.obtener_mensajes_por_sesion(token))})
-            else:
-                response = llmApp.invoke(
-                    {"input": pregunta, "context": ""})
+            #if len(sesiones.obtener_mensajes_por_sesion(token)) != 0:
+            #    response = llmApp.invoke({"input": pregunta,
+            #                              "context": str(sesiones.obtener_mensajes_por_sesion(token))})
+            #else:
+            #    response = llmApp.invoke(
+            #        {"input": pregunta, "context": ""})
+            response = llmApp.invoke({"input": pregunta})
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
