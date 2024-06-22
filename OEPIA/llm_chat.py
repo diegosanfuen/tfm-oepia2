@@ -2,26 +2,28 @@
 # Script principal IA
 
 # Importamos librerias
+from langchain.memory import ConversationBufferMemory
 import sys
 from pathlib import Path
 import os, yaml
 import datetime
 from langchain_community.llms import Ollama
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import gradio as gr
 import logging
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 import re
 from dotenv import load_dotenv  # Esta librería nos permite cargar las variables de ambiente en memoria
+from langchain.agents import Tool
+from typing import Sequence, Any
+from langchain.agents.agent import Agent, AgentOutputParser
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.tools.base import BaseTool
 from langchain.schema.prompt_template import BasePromptTemplate
 from langchain.prompts.prompt import PromptTemplate
 from langchain.agents import AgentExecutor
-from langchain.tools import Tool
-from langchain.memory import ConversationBufferMemory
-from typing import Any, Sequence
+
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 # Introducir esta variable de entorno en el lanzador
