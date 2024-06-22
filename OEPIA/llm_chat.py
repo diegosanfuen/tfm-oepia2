@@ -7,23 +7,21 @@ from pathlib import Path
 import os, yaml
 import datetime
 from langchain_community.llms import Ollama
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.prompts import ChatPromptTemplate
 import gradio as gr
 import logging
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 import re
 from dotenv import load_dotenv  # Esta librería nos permite cargar las variables de ambiente en memoria
-from langchain.agents.agent import Agent, AgentOutputParser
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.tools.base import BaseTool
 from langchain.schema.prompt_template import BasePromptTemplate
 from langchain.prompts.prompt import PromptTemplate
-from langchain.agents import initialize_agent, AgentExecutor
+from langchain.agents import AgentExecutor
 from langchain.tools import Tool
-from langchain.memory import SimpleMemory
+from langchain.memory import ConversationBufferMemory
 from typing import Any, Sequence
-
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 # Introducir esta variable de entorno en el lanzador
@@ -36,7 +34,7 @@ from OEPIA.Utiles import Prompts as prompts
 from OEPIA.Utiles import Utiles as utls
 
 # Memoria del agente
-memory = SimpleMemory()
+memory = ConversationBufferMemory(memory_key="history", return_messages=True)
 
 # Herramienta del Agente PDF
 obtener_boe_texto = utls.obtener_boe_texto
@@ -88,7 +86,7 @@ except Exception as e:
     exit()
 
 # Generamos el token de sesion
-token = ses.generate_token()
+token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
 document_chain = create_stuff_documents_chain(llm, prompt_template)
 retriever_inst = fcg()
@@ -142,9 +140,9 @@ SUFIJO = """
     Por favor, entrega la respuesta sin usar caracteres que puedan causar problemas de parsing como comillas dobles o comillas simples o comas.
     Puedes usar la función cuando consideres necesario. Cada acción se realiza por separado. Contesta siempre en castellano. 
     Después sigue procesando la petición del usuario con las demás ordenes
-    
+
     Vamos a empezar
-    
+
     Question: {input}
     {agent_scratchpad}
 """
@@ -169,7 +167,7 @@ class ReActAgent(Agent):
     """
 
     @classmethod
-    def _get_default_output_parser(cls, **kwargs: Any) -> AgentOutputParser:
+    def _get_default_output_parser(cls, **kwargs: Any) -> ReActOutputParser:
         """
         Retorna una instancia de ReActOutputParser, que es un parser de salida personalizado
         para manejar y analizar las respuestas generadas por el LLM específico de ReAct.
@@ -271,6 +269,8 @@ agent_executor = AgentExecutor.from_agent_and_tools(
 
 # Creamos el chain final
 llmApp = retrieval_chain | agent_executor
+
+
 # llmApp = agent_executor | retrieval_chain
 
 
@@ -307,22 +307,20 @@ def chat(pregunta):
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
-            logger.info(str(str))
+            logger.info(answer)
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
 
 
     else:
         try:
-            response = llmApp.invoke({"input": pregunta,
-                                      "context": str(sesiones.obtener_mensajes_por_sesion(token))})
+            response = llmApp.invoke({"input": pregunta, "context": str(sesiones.obtener_mensajes_por_sesion(token))})
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
-            logger.info(str(str))
+            logger.info(answer)
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
-
 
     return answer
 
@@ -406,13 +404,11 @@ def interactuar_con_llm(texto, historial_previo):
     </div>
     """
 
-    # Si es la primera interacción, no añade una línea en blanco al inicio
     if historial_previo:
         nuevo_historial = f"\n<h3><u>USUARIO:</h3></u><pre> {texto_limpio}</pre>\n\n<h3><u>OEPIA:</u></h3> <div><p>{respuesta}</p></div><br><br>{html_wrapper}\n\n"
     else:
         nuevo_historial = f"\n<h3><u>USUARIO:</u></h3><pre> {texto_limpio}</pre>\n\n<h3><u>OEPIA:</u></h3> <div><p>{respuesta}</p></div>\n\n"
 
-    # Retorna el historial actualizado para mostrarlo en la salida
     history = nuevo_historial
     return nuevo_historial
 
