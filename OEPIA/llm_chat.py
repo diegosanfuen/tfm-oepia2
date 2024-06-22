@@ -315,7 +315,7 @@ def chat(pregunta):
 
     else:
         try:
-            if len(sesiones.obtener_mensajes_por_sesion(token) != 0):
+            if len(sesiones.obtener_mensajes_por_sesion(token)) != 0:
                 response = llmApp.invoke({"input": pregunta,
                                           "context": str(sesiones.obtener_mensajes_por_sesion(token))})
             else:
