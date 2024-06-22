@@ -14,14 +14,14 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 import re
 from dotenv import load_dotenv  # Esta librería nos permite cargar las variables de ambiente en memoria
-from langchain.agents import Tool
 from typing import Sequence, Any
 from langchain.agents.agent import Agent, AgentOutputParser
 from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.tools.base import BaseTool
 from langchain.schema.prompt_template import BasePromptTemplate
 from langchain.prompts.prompt import PromptTemplate
-from langchain.agents import AgentExecutor, MyAgent
+from langchain.agents import initialize_agent, AgentExecutor
+from langchain.tools import Tool
 from langchain.memory import SimpleMemory
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
@@ -252,7 +252,9 @@ class ReActAgent(Agent):
 
 # Creamos una instancia de nuestro agente
 agent = ReActAgent.from_llm_and_tools(
+    HERRAMIENTAS,
     llm,
+    memory=memory
 )
 
 # Definimos el agente ejecutor
