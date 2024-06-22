@@ -21,12 +21,12 @@ from langchain.schema.prompt_template import BasePromptTemplate
 from langchain.prompts.prompt import PromptTemplate
 from langchain.agents import initialize_agent, AgentExecutor
 from langchain.tools import Tool
+from langchain.memory import ConversationBufferMemory
 from langchain.memory import SimpleMemory
 from typing import Any, Sequence
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
-# Introducir esta variable de entorno en el lanzador
-# os.environ['PROJECT_ROOT'] = r'/content/tfm-oepia'
+
 
 sys.path.insert(0, os.environ['PROJECT_ROOT'])
 from Sesiones.sesiones import ManejadorSesiones as ses
