@@ -22,6 +22,8 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.agents import initialize_agent, AgentExecutor
 from langchain.tools import Tool
 from langchain.memory import SimpleMemory
+from typing import Any
+
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 # Introducir esta variable de entorno en el lanzador
