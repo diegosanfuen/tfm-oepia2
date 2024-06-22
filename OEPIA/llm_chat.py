@@ -321,7 +321,8 @@ def chat(pregunta):
             #else:
             #    response = llmApp.invoke(
             #        {"input": pregunta, "context": ""})
-            response = llmApp.invoke({"input": pregunta})
+            response = llmApp.invoke({"input": pregunta,
+                                      "agent_scratchpad": str(sesiones.obtener_mensajes_por_sesion(token))})
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
