@@ -316,24 +316,14 @@ def chat(pregunta):
 
     else:
         try:
-            #if len(sesiones.obtener_mensajes_por_sesion(token)) != 0:
-            #    response = llmApp.invoke({"input": pregunta,
-            #                              "context": str(sesiones.obtener_mensajes_por_sesion(token))})
-            #else:
-            #    response = llmApp.invoke(
-            #        {"input": pregunta, "context": ""})
-            #input_text = f"Question: {pregunta} Context: {str(sesiones.obtener_mensajes_por_sesion(token))}"
             logger.info("LLEGAMOS AQUI 1")
-            messages = [
-                SystemMessage(
-                    content="Eres un agente llamado Albricias. Eres directo y tus respuestas son concisas y breves."),
-                HumanMessage(content="Mi nombre es Juan"),
-                AIMessage(content="Encantado de conocerte Juan, mi nombre es Albricias"),
-                HumanMessage(content="¿Cómo has dicho que me llamo?¿Y como te llamas tu?"),
-            ]
-            response = llmApp.invoke(messages)
+            if len(sesiones.obtener_mensajes_por_sesion(token)) != 0:
+                response = llmApp.invoke({"input": pregunta,
+                                          "context": str(sesiones.obtener_mensajes_por_sesion(token))})
+            else:
+                response = llmApp.invoke(
+                    {"input": pregunta, "context": ""})
             logger.info("LLEGAMOS AQUI 2")
-            #response = llmApp.invoke({"input": input_text})
             answer = str(response['answer'])
             logger.info("LLEGAMOS AQUI 3")
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
