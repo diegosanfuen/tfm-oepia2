@@ -306,7 +306,7 @@ agent_with_chat_history = RunnableWithMessageHistory(
 # llmApp = agent_with_chat_history | retrieval_chain
 
 
-llmApp = llmchain | agent_executor | retrieval_chain
+llmApp = agent_executor | retrieval_chain | llmchain
 
 
 def chat(pregunta):
