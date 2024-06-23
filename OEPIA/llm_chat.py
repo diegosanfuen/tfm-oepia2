@@ -109,7 +109,7 @@ template = """
 prompt = PromptTemplate(input_variables=["input"], template=template)
 
 # Generamos el token de sesion
-memory2 = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+memory2 = ConversationBufferMemory(memory_key="context", return_messages=True)
 
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
@@ -299,7 +299,7 @@ agent_with_chat_history = RunnableWithMessageHistory(
     # It isn't really used here because we are using a simple in memory ChatMessageHistory
     lambda session_id: memory,
     input_messages_key="input",
-    history_messages_key="chat_history",
+    history_messages_key="context",
 )
 
 # Creamos el chain final
@@ -350,7 +350,7 @@ def chat(pregunta):
     else:
         try:
             response = llmApp.invoke({"input": pregunta,
-                                      "chat_history": str(sesiones.obtener_mensajes_por_sesion(token))})
+                                      "context": str(sesiones.obtener_mensajes_por_sesion(token))})
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)

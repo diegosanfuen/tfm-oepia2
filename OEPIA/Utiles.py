@@ -26,7 +26,7 @@ class Prompts:
             * No te inventes información ni rellenes los datos vacios. Si no tienes ofertas que cumplan el criterio di que no tienes. Como eres un chat amigable :) también tienes la capacidad de reponder a preguntas no relaccionadas con las ofertas de empleo público.
 
             <context>
-            {chat_history}
+            {context}
             </context>
 
             Question: {input}
