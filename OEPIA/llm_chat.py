@@ -34,9 +34,6 @@ from FaissOPEIA import carga as fcg
 from OEPIA.Utiles import Prompts as prompts
 from OEPIA.Utiles import Utiles as utls
 
-# Memoria del agente
-memory = ConversationBufferMemory(memory_key="history", return_messages=True)
-
 
 # Herramienta del Agente PDF
 obtener_boe_texto = utls.obtener_boe_texto
@@ -250,7 +247,7 @@ class ReActAgent(Agent):
         """
         return f"Thought: "
 
-
+memory = ChatMessageHistory(session_id="test-session")
 # Creamos una instancia de nuestro agente
 agent = ReActAgent.from_llm_and_tools(
     llm,
@@ -265,7 +262,6 @@ agent_executor = AgentExecutor.from_agent_and_tools(
     handle_parsing_errors=True,
     max_iterations=config['agentePDF']['n_reintentos'],
     return_messages=True,
-    memory=memory,
 )
 
 agent_with_chat_history = RunnableWithMessageHistory(
