@@ -343,8 +343,8 @@ def chat(pregunta):
             logger.debug(str(sesiones.obtener_mensajes_por_sesion(token)))
             response = agent_executor.run(pregunta + " " + str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
             answer = str(response['answer'])
-            sesiones.add_mensajes_por_sesion(token, str(pregunta))
-            sesiones.add_mensajes_por_sesion(token, answer)
+            sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
+            sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
             logger.info(str(str))
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
@@ -358,7 +358,7 @@ def chat(pregunta):
                                       "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))})
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
-            sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {answer}"))
+            sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
             logger.info(str(str))
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
