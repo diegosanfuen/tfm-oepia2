@@ -106,15 +106,15 @@ template = """
 
 
 # Crear una instancia de PromptTemplate
-prompt = PromptTemplate(input_variables=["input", "context"] , template=template)
+prompt = PromptTemplate(input_variables=["input"], template=template)
 
 # Generamos el token de sesion
 memory2 = ConversationBufferMemory(memory_key="context", return_messages=True)
 
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
-document_chain = create_stuff_documents_chain(llm, prompt)
-llmchain = (llm, prompt, memory2)
+document_chain = create_stuff_documents_chain(llm, prompt_template)
+llmchain = (llm, prompt_template, memory2)
 retriever_inst = fcg()
 retriever_faiss = retriever_inst.inialize_retriever()
 retrieval_chain = create_retrieval_chain(retriever_faiss, document_chain)
@@ -308,7 +308,7 @@ agent_with_chat_history = RunnableWithMessageHistory(
 # llmApp = agent_with_chat_history | retrieval_chain
 
 
-llmApp = prompt | agent_executor | retrieval_chain
+llmApp = retrieval_chain | agent_executor
 
 
 def chat(pregunta):
