@@ -100,7 +100,7 @@ template = """
             * No te inventes información ni rellenes los datos vacios. Si no tienes ofertas que cumplan el criterio di que no tienes. Como eres un chat amigable :) también tienes la capacidad de reponder a preguntas no relaccionadas con las ofertas de empleo público.
 
             Pregunta: {input}
-            {chat_history}
+            {context}
             Asistente:
             """
 
@@ -308,7 +308,7 @@ agent_with_chat_history = RunnableWithMessageHistory(
 # llmApp = agent_with_chat_history | retrieval_chain
 
 
-llmApp = agent_executor | retrieval_chain
+llmApp = prompt | agent_executor | retrieval_chain
 
 
 def chat(pregunta):
