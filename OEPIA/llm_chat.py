@@ -22,10 +22,7 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.agents import initialize_agent, AgentExecutor
 from langchain.tools import Tool
 from langchain.memory import ConversationBufferMemory
-from langchain.memory import SimpleMemory
 from typing import Any, Sequence
-from langchain.messages import SystemMessage, HumanMessage, AIMessage
-from langchain.memory import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
