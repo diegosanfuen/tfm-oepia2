@@ -325,7 +325,7 @@ def chat(pregunta):
                                            config={"configurable": {"session_id": token}},
                                            )
             logger.info("LLEGAMOS AQUI 2")
-            answer = str(response)
+            answer = str(response['output'])
             logger.info("LLEGAMOS AQUI 3")
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
