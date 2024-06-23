@@ -25,6 +25,8 @@ from langchain.memory import ConversationBufferMemory
 from langchain.memory import SimpleMemory
 from typing import Any, Sequence
 from langchain.messages import SystemMessage, HumanMessage, AIMessage
+from langchain.memory import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 
@@ -37,6 +39,7 @@ from OEPIA.Utiles import Utiles as utls
 
 # Memoria del agente
 memory = ConversationBufferMemory(memory_key="history", return_messages=True)
+
 
 # Herramienta del Agente PDF
 obtener_boe_texto = utls.obtener_boe_texto
@@ -255,7 +258,6 @@ class ReActAgent(Agent):
 agent = ReActAgent.from_llm_and_tools(
     llm,
     HERRAMIENTAS,
-    memory=memory
 )
 
 # Definimos el agente ejecutor
@@ -267,6 +269,15 @@ agent_executor = AgentExecutor.from_agent_and_tools(
     max_iterations=config['agentePDF']['n_reintentos'],
     return_messages=True,
     memory=memory,
+)
+
+agent_with_chat_history = RunnableWithMessageHistory(
+    agent_executor,
+    # This is needed because in most real world scenarios, a session id is needed
+    # It isn't really used here because we are using a simple in memory ChatMessageHistory
+    lambda session_id: memory,
+    input_messages_key="input",
+    history_messages_key="chat_history",
 )
 
 # Creamos el chain final
@@ -317,14 +328,11 @@ def chat(pregunta):
     else:
         try:
             logger.info("LLEGAMOS AQUI 1")
-            if len(sesiones.obtener_mensajes_por_sesion(token)) != 0:
-                response = llmApp.invoke({"input": pregunta,
-                                          "context": str(sesiones.obtener_mensajes_por_sesion(token))})
-            else:
-                response = llmApp.invoke(
-                    {"input": pregunta, "context": ""})
+            response = agent_with_chat_history.invoke({"input": pregunta},
+                                           config={"configurable": {"session_id": token}},
+                                           )
             logger.info("LLEGAMOS AQUI 2")
-            answer = str(response['answer'])
+            answer = str(response)
             logger.info("LLEGAMOS AQUI 3")
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
