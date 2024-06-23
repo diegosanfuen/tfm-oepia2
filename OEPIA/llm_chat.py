@@ -335,7 +335,7 @@ def chat(pregunta):
         answer = "Sesión reseteada"
 
     elif ("@ver_historial" in pregunta.lower()):
-        answer = sesiones.obtener_mensajes_por_sesion(token)
+        answer =  str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))
 
     elif ("usa el agente para" in pregunta.lower()):
         try:
