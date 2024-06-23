@@ -113,7 +113,8 @@ memory2 = ConversationBufferMemory(memory_key="chat_history", return_messages=Tr
 
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
-document_chain = LLMChain(llm=llm, prompt=prompt_template, memory=memory2)
+document_chain = create_stuff_documents_chain(llm, prompt_template)
+llmchain = (llm=llm, prompt=prompt_template, memory=memory2)
 retriever_inst = fcg()
 retriever_faiss = retriever_inst.inialize_retriever()
 retrieval_chain = create_retrieval_chain(retriever_faiss, document_chain)
@@ -305,7 +306,7 @@ agent_with_chat_history = RunnableWithMessageHistory(
 # llmApp = agent_with_chat_history | retrieval_chain
 
 
-llmApp = agent_executor | retrieval_chain
+llmApp = llmchain | agent_executor | retrieval_chain
 
 
 def chat(pregunta):
@@ -349,7 +350,7 @@ def chat(pregunta):
     else:
         try:
             response = llmApp.invoke({"input": pregunta,
-                                      "context": str(sesiones.obtener_mensajes_por_sesion(token))})
+                                      "chat_history": str(sesiones.obtener_mensajes_por_sesion(token))})
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
