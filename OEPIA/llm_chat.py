@@ -311,7 +311,9 @@ def chat(pregunta):
         try:
             response = agent_executor.run(pregunta + " " + str(sesiones.obtener_mensajes_por_sesion(token)))
             answer = str(response['answer'])
-            logger.debug(memory.get_messages())
+            messages = memory.messages
+            for message in messages:
+                logger.debug(f"{message['role']}: {message['content']}")
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
@@ -328,7 +330,9 @@ def chat(pregunta):
             logger.info("LLEGAMOS AQUI 2")
             answer = str(response['answer'])
             logger.info("LLEGAMOS AQUI 3")
-            logger.debug(memory.get_messages())
+            messages = memory.messages
+            for message in messages:
+                logger.debug(f"{message['role']}: {message['content']}"
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
