@@ -312,6 +312,7 @@ def chat(pregunta):
             response = agent_executor.run(pregunta + " " + str(sesiones.obtener_mensajes_por_sesion(token)))
             answer = str(response['answer'])
             messages = memory.messages
+            logger.debug(dir(messages))
             for message in messages:
                 if hasattr(message, 'content') and hasattr(message, 'role'):
                     logger.debug(f"{message.role}: {message.content}")
@@ -334,6 +335,7 @@ def chat(pregunta):
             answer = str(response['answer'])
             logger.info("LLEGAMOS AQUI 3")
             messages = memory.messages
+            logger.debug(dir(messages))
             for message in messages:
                 if hasattr(message, 'content') and hasattr(message, 'role'):
                     logger.debug(f"{message.role}: {message.content}")
