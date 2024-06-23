@@ -25,6 +25,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.memory import ChatMessageHistory
 from langchain.memory import ConversationBufferMemory
+from langchain import LLMChain
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 
