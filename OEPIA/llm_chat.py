@@ -111,7 +111,7 @@ prompt = PromptTemplate(input_variables=["input"], template=template)
 memory2 = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
 # Crear una instancia de LLMChain con el modelo y la memoria de sesión
-llm_chain = LLMChain(llm=llm, prompt=prompt, memory=memory)
+llm_chain = LLMChain(llm=llm, prompt=prompt, memory=memory2)
 
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
