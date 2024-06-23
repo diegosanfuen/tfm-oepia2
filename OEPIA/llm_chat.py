@@ -113,7 +113,7 @@ memory2 = ConversationBufferMemory(memory_key="chat_history", return_messages=Tr
 
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
-document_chain = create_stuff_documents_chain(llm=llm, prompt=prompt_template, memory=memory2)
+document_chain = LLMChain(llm=llm, prompt=prompt_template, memory=memory2)
 retriever_inst = fcg()
 retriever_faiss = retriever_inst.inialize_retriever()
 retrieval_chain = create_retrieval_chain(retriever_faiss, document_chain)
