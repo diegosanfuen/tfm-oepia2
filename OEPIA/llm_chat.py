@@ -274,13 +274,14 @@ class ReActAgent(Agent):
         """
         return f"Thought: "
 
-memory = ChatMessageHistory(session_id="test-session")
+memory = ChatMessageHistory(session_id=token, return_messages=True)
 
 
 # Creamos una instancia de nuestro agente
 agent = ReActAgent.from_llm_and_tools(
     llm,
     HERRAMIENTAS,
+    memory=memory
 )
 
 # Definimos el agente ejecutor
@@ -303,10 +304,10 @@ agent_with_chat_history = RunnableWithMessageHistory(
 )
 
 # Creamos el chain final
-# llmApp = agent_with_chat_history | retrieval_chain
+llmApp = agent_with_chat_history | retrieval_chain
 
 
-llmApp = agent_executor | retrieval_chain
+# llmApp = agent_executor | retrieval_chain
 
 
 def chat(pregunta):
