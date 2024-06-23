@@ -279,7 +279,7 @@ memory = ChatMessageHistory(session_id="test-session")
 
 # Creamos una instancia de nuestro agente
 agent = ReActAgent.from_llm_and_tools(
-    llm,
+    llmchain,
     HERRAMIENTAS,
 )
 
