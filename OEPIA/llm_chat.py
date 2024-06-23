@@ -339,31 +339,21 @@ def chat(pregunta):
         try:
             response = agent_executor.run(pregunta + " " + str(sesiones.obtener_mensajes_por_sesion(token)))
             answer = str(response['answer'])
-            messages = memory.messages
-            logger.debug(dir(messages))
-            logger.debug(messages)
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
-            logger.info(answer)
+            logger.info(str(str))
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
 
 
     else:
         try:
-            logger.info("LLEGAMOS AQUI 1")
-            response = llmApp.invoke({"input": pregunta},
-                                           config={"configurable": {"session_id": token}},
-                                           )
-            logger.info("LLEGAMOS AQUI 2")
+            response = llmApp.invoke({"input": pregunta,
+                                      "context": str(sesiones.obtener_mensajes_por_sesion(token))})
             answer = str(response['answer'])
-            logger.info("LLEGAMOS AQUI 3")
-            messages = memory.messages
-            logger.debug(dir(messages))
-            logger.debug(messages)
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
-            logger.info(answer)
+            logger.info(str(str))
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
 
