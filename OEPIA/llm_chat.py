@@ -313,7 +313,10 @@ def chat(pregunta):
             answer = str(response['answer'])
             messages = memory.messages
             for message in messages:
-                logger.debug(f"{message['role']}: {message['content']}")
+                if hasattr(message, 'content') and hasattr(message, 'role'):
+                    logger.debug(f"{message.role}: {message.content}")
+                else:
+                    logger.debug("El mensaje no tiene los atributos esperados 'content' y 'role'.")
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
@@ -332,7 +335,10 @@ def chat(pregunta):
             logger.info("LLEGAMOS AQUI 3")
             messages = memory.messages
             for message in messages:
-                logger.debug(f"{message['role']}: {message['content']}")
+                if hasattr(message, 'content') and hasattr(message, 'role'):
+                    logger.debug(f"{message.role}: {message.content}")
+                else:
+                    logger.debug("El mensaje no tiene los atributos esperados 'content' y 'role'.")
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
