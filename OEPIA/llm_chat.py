@@ -339,6 +339,8 @@ def chat(pregunta):
 
     elif ("usa el agente para" in pregunta.lower()):
         try:
+            logger.debug("-----------------------HISTORY---------------")
+            logger.debug(str(sesiones.obtener_mensajes_por_sesion(token)))
             response = agent_executor.run(pregunta + " " + str(sesiones.obtener_mensajes_por_sesion(token)))
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
@@ -350,6 +352,8 @@ def chat(pregunta):
 
     else:
         try:
+            logger.debug("-----------------------HISTORY---------------")
+            logger.debug(str(sesiones.obtener_mensajes_por_sesion(token)))
             response = llmApp.invoke({"input": pregunta,
                                       "context": str(sesiones.obtener_mensajes_por_sesion(token))})
             answer = str(response['answer'])
