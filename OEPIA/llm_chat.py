@@ -19,11 +19,11 @@ from langchain.agents.react.output_parser import ReActOutputParser
 from langchain.tools.base import BaseTool
 from langchain.schema.prompt_template import BasePromptTemplate
 from langchain.prompts.prompt import PromptTemplate
-from langchain.agents import initialize_agent, AgentExecutor
 from langchain.tools import Tool
-from langchain.memory import ConversationBufferMemory
 from typing import Any, Sequence
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain.agents import AgentExecutor, create_react_agent
+from langchain.memory import ChatMessageHistory
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 
