@@ -341,7 +341,7 @@ def chat(pregunta):
         try:
             logger.debug("-----------------------HISTORY---------------")
             logger.debug(str(sesiones.obtener_mensajes_por_sesion(token)))
-            response = agent_executor.run(pregunta + " " + str(sesiones.obtener_mensajes_por_sesion(token)))
+            response = agent_executor.run(pregunta + " " + str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
@@ -353,12 +353,12 @@ def chat(pregunta):
     else:
         try:
             logger.debug("-----------------------HISTORY---------------")
-            logger.debug(str(sesiones.obtener_mensajes_por_sesion(token)))
+            logger.debug(str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
             response = llmApp.invoke({"input": pregunta,
-                                      "context": str(sesiones.obtener_mensajes_por_sesion(token))})
+                                      "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))})
             answer = str(response['answer'])
-            sesiones.add_mensajes_por_sesion(token, str(pregunta))
-            sesiones.add_mensajes_por_sesion(token, answer)
+            sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
+            sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {answer}"))
             logger.info(str(str))
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
