@@ -274,7 +274,7 @@ agent_with_chat_history = RunnableWithMessageHistory(
 )
 
 # Creamos el chain final
-llmApp = retrieval_chain | agent_executor
+llmApp = retrieval_chain | agent_with_chat_history
 
 
 # llmApp = agent_executor | retrieval_chain
@@ -321,11 +321,11 @@ def chat(pregunta):
     else:
         try:
             logger.info("LLEGAMOS AQUI 1")
-            response = agent_with_chat_history.invoke({"input": pregunta},
+            response = llmApp.invoke({"input": pregunta},
                                            config={"configurable": {"session_id": token}},
                                            )
             logger.info("LLEGAMOS AQUI 2")
-            answer = str(response['output'])
+            answer = str(response['answer'])
             logger.info("LLEGAMOS AQUI 3")
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
