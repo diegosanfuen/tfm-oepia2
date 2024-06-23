@@ -332,7 +332,7 @@ def chat(pregunta):
             logger.info("LLEGAMOS AQUI 3")
             messages = memory.messages
             for message in messages:
-                logger.debug(f"{message['role']}: {message['content']}"
+                logger.debug(f"{message['role']}: {message['content']}")
             sesiones.add_mensajes_por_sesion(token, str(pregunta))
             sesiones.add_mensajes_por_sesion(token, answer)
             logger.info(answer)
