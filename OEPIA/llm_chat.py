@@ -281,7 +281,6 @@ memory = ChatMessageHistory(session_id=token, return_messages=True)
 agent = ReActAgent.from_llm_and_tools(
     llm,
     HERRAMIENTAS,
-    memory=memory
 )
 
 # Definimos el agente ejecutor
@@ -292,6 +291,7 @@ agent_executor = AgentExecutor.from_agent_and_tools(
     handle_parsing_errors=True,
     max_iterations=config['agentePDF']['n_reintentos'],
     return_messages=True,
+    memory=memory
 )
 
 agent_with_chat_history = RunnableWithMessageHistory(
