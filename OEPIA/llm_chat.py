@@ -106,7 +106,7 @@ template = """
 
 
 # Crear una instancia de PromptTemplate
-prompt = PromptTemplate(input_variables=["input"], template=template)
+prompt = PromptTemplate(input_variables=["input", "context"], template=template)
 
 # Generamos el token de sesion
 memory2 = ConversationBufferMemory(memory_key="context", return_messages=True)
