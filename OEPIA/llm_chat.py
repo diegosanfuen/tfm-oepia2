@@ -24,6 +24,7 @@ from typing import Any, Sequence
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.memory import ChatMessageHistory
+from langchain.memory import ConversationBufferMemory
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 
@@ -74,7 +75,8 @@ try:
     temperature = config['llm_oepia']['parameters_modelo']['temperature']
     assistant_name = config['llm_oepia']['parameters_modelo']['nombre_asistente']
     llm = Ollama(model=modelo,
-                 temperature=temperature)
+                 temperature=temperature,
+                )
 except Exception as e:
     logger.error(f'Un Error se produjo al intentar cargar el modelo {modelo} : {e}')
     exit()
@@ -85,9 +87,14 @@ except Exception as e:
     exit()
 
 # Generamos el token de sesion
+memory2 = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+# Crear una instancia de LLMChain con el modelo y la memoria de sesión
+llm_chain = LLMChain(llm=llm, prompt=prompt, memory=memory)
+
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
-document_chain = create_stuff_documents_chain(llm, prompt_template)
+document_chain = create_stuff_documents_chain(llm_chain, prompt_template)
 retriever_inst = fcg()
 retriever_faiss = retriever_inst.inialize_retriever()
 retrieval_chain = create_retrieval_chain(retriever_faiss, document_chain)
@@ -248,9 +255,11 @@ class ReActAgent(Agent):
         return f"Thought: "
 
 memory = ChatMessageHistory(session_id="test-session")
+
+
 # Creamos una instancia de nuestro agente
 agent = ReActAgent.from_llm_and_tools(
-    llm,
+    llm_chain,
     HERRAMIENTAS,
 )
 
