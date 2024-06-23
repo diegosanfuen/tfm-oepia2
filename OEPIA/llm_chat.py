@@ -99,7 +99,8 @@ template = """
             * Es importante que los resultados sean precisos y actualizados porque la competencia para puestos de empleo público es alta y los plazos de solicitud suelen ser estrictos. Agradezco tu ayuda en este proceso vital para mi carrera profesional.
             * No te inventes información ni rellenes los datos vacios. Si no tienes ofertas que cumplan el criterio di que no tienes. Como eres un chat amigable :) también tienes la capacidad de reponder a preguntas no relaccionadas con las ofertas de empleo público.
 
-            Question: {input}
+            Pregunta: {input}
+            {chat_history}
             Asistente:
             """
 
@@ -110,12 +111,9 @@ prompt = PromptTemplate(input_variables=["input"], template=template)
 # Generamos el token de sesion
 memory2 = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
-# Crear una instancia de LLMChain con el modelo y la memoria de sesión
-llm_chain = LLMChain(llm=llm, prompt=prompt, memory=memory2)
-
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
-document_chain = create_stuff_documents_chain(llm_chain, prompt_template)
+document_chain = create_stuff_documents_chain(llm=llm, prompt=prompt_template, memory=memory2)
 retriever_inst = fcg()
 retriever_faiss = retriever_inst.inialize_retriever()
 retrieval_chain = create_retrieval_chain(retriever_faiss, document_chain)
@@ -304,10 +302,10 @@ agent_with_chat_history = RunnableWithMessageHistory(
 )
 
 # Creamos el chain final
-llmApp = agent_with_chat_history | retrieval_chain
+# llmApp = agent_with_chat_history | retrieval_chain
 
 
-# llmApp = agent_executor | retrieval_chain
+llmApp = agent_executor | retrieval_chain
 
 
 def chat(pregunta):
