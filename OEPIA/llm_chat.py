@@ -171,6 +171,7 @@ SUFIJO = """
 
     Question: {input}
     {agent_scratchpad}
+    {context}
 """
 
 PROMPT_AGENTE = PromptTemplate.from_examples(
