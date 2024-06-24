@@ -341,9 +341,11 @@ def chat(pregunta):
                 logger.debug(str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
                 # response = llmApp.invoke({"input": pregunta,
                 #                          "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))})
-                response = llmAppAgent.invoke({"input": pregunta,
-                                          "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
-                                         {'configurable': {'session_id': f'{token}'}})
+                response = llmAppAgent.invoke({{"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
+                                               "<context>" + str('\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=10))) +
+                                               "</context>\n" + pregunta,
+                                      "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
+                                     {'configurable': {'session_id': f'{token}'}})
                 answer = str(response['answer'])
                 sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
                 sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
