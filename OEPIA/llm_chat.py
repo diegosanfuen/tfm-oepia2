@@ -23,8 +23,9 @@ from langchain.tools import Tool
 from typing import Any, Sequence
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.agents import AgentExecutor, create_react_agent
-from langchain.memory import ChatMessageHistory
-from langchain import PromptTemplate
+from langchain_community.chat_message_histories.in_memory import ChatMessageHistory
+from langchain_core.prompts import PromptTemplate
+
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 
