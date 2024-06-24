@@ -5,6 +5,28 @@ import io
 sys.path.insert(0, os.environ['PROJECT_ROOT'])
 from Sesiones.sesiones import ManejadorSesiones as ses
 
+# Abrir y leer el archivo YAML
+with open(Path(os.getenv('PROJECT_ROOT')) / 'config/config.yml', 'r') as file:
+    config = yaml.safe_load(file)
+
+# Configuración básica del logger
+log_level = None
+match config['logs_config']['level']:
+    case 'DEBUG':
+        log_level = logging.DEBUG
+    case 'WARN':
+        log_level = logging.WARNING
+    case 'WARNING':
+        log_level = logging.WARNING
+    case 'ERROR':
+        log_level = logging.ERROR
+    case _:
+        log_level = logging.INFO
+
+logging.basicConfig(filename=PATH_BASE / config['logs_config']['ruta_salida_logs'] / f'logs_{date_today}.log',
+                    level=log_level,
+                    format=config['logs_config']['format'])
+
 
 class Prompts:
     """
@@ -157,13 +179,19 @@ class Utiles:
         return MARKDOWN
 
     @staticmethod
-    def obtenerPROMPTMemoriaContextoOEPIA(k=0):
+    def obtenerPROMPTMemoriaContextoOEPIA(k=0, token):
         """
         Método que devuleve un PROMPT que usa la cadena para mantener la memoria del contexto,
         recibe el parámetro k, que es número de elementos a recuperar de la base de datos de sesiones.
         :param k: Número de elementos a recuperar de la bbd de sesiones k=0 todos
+        :param token: token id_sesion
         :return: el prompt de contexto más los elementos recuperados
         """
+        try:
+            sesiones = ses()
+        except Exception as e:
+            logger.error(f'Un Error se produjo al intentar cargar la base de datos de sesiones: {e}')
+            exit()
         prompt = """
         <context>
         Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, 
