@@ -12,6 +12,10 @@ from Sesiones.sesiones import ManejadorSesiones as ses
 with open(Path(os.getenv('PROJECT_ROOT')) / 'config/config.yml', 'r') as file:
     config = yaml.safe_load(file)
 
+PATH_BASE = Path(config['ruta_base'])
+directorio_proyecto = os.path.dirname(Path(PATH_BASE) / config['llm_oepia']['ruta'])
+date_today = datetime.datetime.today().strftime("%Y_%m_%d")
+
 # Configuración básica del logger
 log_level = None
 match config['logs_config']['level']:
