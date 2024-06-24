@@ -108,13 +108,11 @@ template = """
 # Crear una instancia de PromptTemplate
 prompt = PromptTemplate(input_variables=["input"], template=template)
 
-# Generamos el token de sesion
-memory2 = ConversationBufferMemory(memory_key="context", return_messages=True, k=10)
 
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
 document_chain = create_stuff_documents_chain(llm, prompt_template)
-llmchain = (llm, prompt_template, memory2)
+
 retriever_inst = fcg()
 retriever_faiss = retriever_inst.inialize_retriever()
 retrieval_chain = create_retrieval_chain(retriever_faiss, document_chain)
@@ -307,11 +305,7 @@ agent_with_chat_history = RunnableWithMessageHistory(
 )
 
 # Creamos el chain final
-# llmApp = agent_with_chat_history | retrieval_chain
 llmApp = retrieval_chain | agent_with_chat_history
-
-# llmApp = retrieval_chain | agent_executor
-
 
 def chat(pregunta):
     """
@@ -345,7 +339,7 @@ def chat(pregunta):
             logger.debug(str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
             #response = llmApp.invoke({"input": pregunta,
             #                          "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))})
-            response = llmApp.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas: " +
+            response = llmApp.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
                                                "<context>" + str('\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=10))) +
                                                "</context>\n" + pregunta,
                                       "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
