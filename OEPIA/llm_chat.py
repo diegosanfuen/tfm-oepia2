@@ -336,16 +336,29 @@ def chat(pregunta):
         answer =  str("<br>".join(sesiones.obtener_mensajes_por_sesion(token)))
     else:
         try:
-            response = llmAppAgent.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
-                                                       "<context>" + str(
-                                                  '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=1))) +
-                                                       "</context>\n" + pregunta,
-                                              "context": str(
-                                                  "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
-                                          {'configurable': {'session_id': f'{token}'}})
-            answer = str(response['answer'])
-            sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
-            sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
+            if "usa el agente" in pregunta.lower():
+                response = llmAppAgent.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
+                                                           "<context>" + str(
+                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=1))) +
+                                                           "</context>\n" + pregunta,
+                                                  "context": str(
+                                                      "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
+                                              {'configurable': {'session_id': f'{token}'}})
+                answer = str(response['answer'])
+                sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
+                sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
+            else:
+                response = llmApp.invoke({
+                                                  "input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
+                                                           "<context>" + str(
+                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=1))) +
+                                                           "</context>\n" + pregunta,
+                                                  "context": str(
+                                                      "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
+                                              {'configurable': {'session_id': f'{token}'}})
+                answer = str(response['answer'])
+                sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
+                sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
 
