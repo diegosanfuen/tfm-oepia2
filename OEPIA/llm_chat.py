@@ -300,8 +300,6 @@ agent_with_chat_history = RunnableWithMessageHistory(
     lambda session_id: memory,
     input_messages_key="input",
     history_messages_key="context",
-    max_iterations=config['agentePDF']['n_reintentos'],
-    return_messages=True,
 )
 
 # Creamos el chain final
