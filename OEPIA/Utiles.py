@@ -1,6 +1,6 @@
 import requests
 import pdfplumber
-import io
+import io, sys
 
 sys.path.insert(0, os.environ['PROJECT_ROOT'])
 from Sesiones.sesiones import ManejadorSesiones as ses
