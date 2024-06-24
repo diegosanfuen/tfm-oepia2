@@ -351,7 +351,7 @@ def chat(pregunta):
                 response = llmApp.invoke({
                                                   "input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
                                                            "<context>" + str(
-                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=10))) +
+                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=1))) +
                                                            "</context>\n" + pregunta,
                                                   "context": str(
                                                       "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
