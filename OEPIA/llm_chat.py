@@ -336,12 +336,8 @@ def chat(pregunta):
         answer =  str("<br>".join(sesiones.obtener_mensajes_por_sesion(token)))
     else:
         try:
-            response = llmAppAgent.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
-                                                       "<context>" + str(
-                                                  '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=2))) +
-                                                       "</context>\n" + pregunta,
-                                              "context": str(
-                                                  "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
+            response = llmAppAgent.invoke({"input": utls.obtenerPROMPTMemoriaContextoOEPIA(k=4) + pregunta,
+                                           "context": utls.obtenerPROMPTMemoriaContextoOEPIA(k=0)},
                                           {'configurable': {'session_id': f'{token}'}})
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))

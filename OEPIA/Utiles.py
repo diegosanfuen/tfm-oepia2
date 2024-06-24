@@ -2,6 +2,9 @@ import requests
 import pdfplumber
 import io
 
+sys.path.insert(0, os.environ['PROJECT_ROOT'])
+from Sesiones.sesiones import ManejadorSesiones as ses
+
 
 class Prompts:
     """
@@ -152,3 +155,19 @@ class Utiles:
         [Portal RAG OEPIA](http://ragoepia.atwebpages.com/)
         """
         return MARKDOWN
+
+    @staticmethod
+    def obtenerPROMPTMemoriaContextoOEPIA(k=0):
+        """
+        Método que devuleve un PROMPT que usa la cadena para mantener la memoria del contexto,
+        recibe el parámetro k, que es número de elementos a recuperar de la base de datos de sesiones.
+        :param k: Número de elementos a recuperar de la bbd de sesiones k=0 todos
+        :return: el prompt de contexto más los elementos recuperados
+        """
+        prompt = """
+        <context>
+        Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, 
+        si se te solicita una operación concreta omite el conexto: 
+        """ + str('\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=2)) + "</context>\n"
+        return prompt
+
