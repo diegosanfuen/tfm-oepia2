@@ -348,11 +348,8 @@ def chat(pregunta):
                 sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
                 sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
             else:
-                response = llmApp.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
-                                                           "<context>" + str(
-                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=2))) +
-                                                           "</context>\n" + pregunta,
-                                                  "context": str(
+                response = llmApp.invoke({"input": pregunta,
+                                          "context": str(
                                                       "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
                                               {'configurable': {'session_id': f'{token}'}})
                 answer = str(response['answer'])
