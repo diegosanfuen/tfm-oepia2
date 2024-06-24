@@ -124,17 +124,32 @@ class ManejadorSesiones():
             return 0
 
 
-    def obtener_mensajes_por_sesion(self, id_session) -> list:
+    def obtener_mensajes_por_sesion(self, id_session, k=0) -> list:
         """
         Obitene los mensajes por sesion dado el id_sesion
         :param self:
         :param id_session: Identificador alfanumerico de la sesion
+        :param k: Número de sesiones máximas recuperadas
         :return: Los mensajes en formato lista de la sesion
         """
         prompts = []
         try:
             conn = self.obtener_db_conexion()
-            res = conn.execute(f"SELECT * FROM {self.tabla_sesiones} where id_session='{id_session}';").fetchall()
+            if k == 0:
+                res = conn.execute(f"""
+                SELECT * FROM {self.tabla_sesiones} 
+                where id_session='{id_session}' 
+                order by id desc;
+            """
+                                   ).fetchall()
+            else:
+                res = conn.execute(f"""
+                SELECT * FROM {self.tabla_sesiones} 
+                where id_session='{id_session}' 
+                order by id desc
+                limit {k};
+            """
+                                   ).fetchall()
             logging.info("Consulta ejecutada OK")
 
             for item in res:
