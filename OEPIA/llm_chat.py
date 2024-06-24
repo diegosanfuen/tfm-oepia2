@@ -339,28 +339,14 @@ def chat(pregunta):
 
     elif ("@ver_historial" in pregunta.lower()):
         answer =  str("<br>".join(sesiones.obtener_mensajes_por_sesion(token)))
-
-    elif ("usa el agente para" in pregunta.lower()):
-        try:
-            logger.debug("-----------------------HISTORY---------------")
-            logger.debug(str(sesiones.obtener_mensajes_por_sesion(token)))
-            response = agent_executor.run(pregunta + " " + str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
-            answer = str(response['answer'])
-            sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
-            sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
-            logger.info(str(str))
-        except Exception as e:
-            logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
-
-
     else:
         try:
             logger.debug("-----------------------HISTORY---------------")
             logger.debug(str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
             #response = llmApp.invoke({"input": pregunta,
             #                          "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))})
-            response = llmApp.invoke({"input": "<context>" +
-                                               str('\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=10))) +
+            response = llmApp.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas: " +
+                                               "<context>" + str('\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=10))) +
                                                "</context>\n" + pregunta,
                                       "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
                                      {'configurable': {'session_id': f'{token}'}})
