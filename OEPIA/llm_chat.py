@@ -24,8 +24,7 @@ from typing import Any, Sequence
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.memory import ChatMessageHistory
-
-from langchain import LLMChain, PromptTemplate
+from langchain import PromptTemplate
 
 load_dotenv()  # Realizamos la carga de las variables de ambiente
 
@@ -337,22 +336,17 @@ def chat(pregunta):
     else:
         try:
             if "usa el agente" in pregunta.lower():
-                logger.debug("-----------------------HISTORY---------------")
-                logger.debug(str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
-                # response = llmApp.invoke({"input": pregunta,
-                #                          "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))})
-                response = llmAppAgent.invoke({"input": pregunta,
-                                          "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
-                                         {'configurable': {'session_id': f'{token}'}})
+                response = llmAppAgent.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
+                                                           "<context>" + str(
+                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=1))) +
+                                                           "</context>\n" + pregunta,
+                                                  "context": str(
+                                                      "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
+                                              {'configurable': {'session_id': f'{token}'}})
                 answer = str(response['answer'])
                 sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
                 sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
-                logger.info(str(str))
             else:
-                logger.debug("-----------------------HISTORY---------------")
-                logger.debug(str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
-                #response = llmApp.invoke({"input": pregunta,
-                #                          "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))})
                 response = llmApp.invoke({
                                                   "input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
                                                            "<context>" + str(
@@ -364,7 +358,6 @@ def chat(pregunta):
                 answer = str(response['answer'])
                 sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
                 sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
-                logger.info(str(str))
         except Exception as e:
             logger.error(f'Un Error se produjo al intentar invocar el LLM: {e}')
 
