@@ -2,7 +2,8 @@ import requests
 import pdfplumber
 import io, sys, os, yaml
 from pathlib import Path
-import datetime
+import logging
+
 
 sys.path.insert(0, os.environ['PROJECT_ROOT'])
 from Sesiones.sesiones import ManejadorSesiones as ses
