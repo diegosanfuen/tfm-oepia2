@@ -359,8 +359,8 @@ def chat(pregunta):
             logger.debug(str("\n".join(sesiones.obtener_mensajes_por_sesion(token))))
             #response = llmApp.invoke({"input": pregunta,
             #                          "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))})
-            response = llmApp.invoke({"input": pregunta},
-                                     {"context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
+            response = llmApp.invoke({"input": pregunta,
+                                      "context": str("\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
                                      {'configurable': {'session_id': f'{token}'}})
             answer = str(response['answer'])
             sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
