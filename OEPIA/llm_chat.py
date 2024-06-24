@@ -109,7 +109,7 @@ template = """
 prompt = PromptTemplate(input_variables=["input"], template=template)
 
 # Generamos el token de sesion
-memory2 = ConversationBufferMemory(memory_key="context", return_messages=True)
+memory2 = ConversationBufferMemory(memory_key="context", return_messages=True, k=10)
 
 token = sesiones.generate_token()
 prompt_template = ChatPromptTemplate.from_template(prompts.obtenerPROMPTTemplatePrincipalOEPIA())
@@ -302,13 +302,15 @@ agent_with_chat_history = RunnableWithMessageHistory(
     lambda session_id: memory,
     input_messages_key="input",
     history_messages_key="context",
+    max_iterations=config['agentePDF']['n_reintentos'],
+    return_messages=True,
 )
 
 # Creamos el chain final
 # llmApp = agent_with_chat_history | retrieval_chain
+llmApp = retrieval_chain | agent_with_chat_history
 
-
-llmApp = retrieval_chain | agent_executor
+# llmApp = retrieval_chain | agent_executor
 
 
 def chat(pregunta):
