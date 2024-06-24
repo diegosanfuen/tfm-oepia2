@@ -339,7 +339,7 @@ def chat(pregunta):
             if "usa el agente" in pregunta.lower():
                 response = llmAppAgent.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
                                                            "<context>" + str(
-                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=1))) +
+                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=2))) +
                                                            "</context>\n" + pregunta,
                                                   "context": str(
                                                       "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
@@ -348,10 +348,9 @@ def chat(pregunta):
                 sesiones.add_mensajes_por_sesion(token, str(f"HumanMessage: {pregunta}"))
                 sesiones.add_mensajes_por_sesion(token, str(f"AIMessage: {answer}"))
             else:
-                response = llmApp.invoke({
-                                                  "input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
+                response = llmApp.invoke({"input": "Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, si se te solicita una operación concreta omite el conexto: " +
                                                            "<context>" + str(
-                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=1))) +
+                                                      '\n'.join(sesiones.obtener_mensajes_por_sesion(token, k=2))) +
                                                            "</context>\n" + pregunta,
                                                   "context": str(
                                                       "\n".join(sesiones.obtener_mensajes_por_sesion(token)))},
