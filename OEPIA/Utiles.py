@@ -196,6 +196,6 @@ class Utiles:
         <context>
         Ten en cuenta la siguiente información como contexto, pero no la incluyas en tus respuestas, 
         si se te solicita una operación concreta omite el conexto: 
-        """ + str('\n'.join(sesiones.obtener_mensajes_por_sesion(token, k)) + "</context>\n"
+        """ + str('\n'.join(sesiones.obtener_mensajes_por_sesion(token, k))) + "</context>\n"
         return prompt
 
