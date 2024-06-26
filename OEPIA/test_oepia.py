@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, os.environ['PROJECT_ROOT'])
+
 import unittest
 from Utiles import Prompts as promt
 from Utiles import Utiles as utls
