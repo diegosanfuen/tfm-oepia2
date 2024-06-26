@@ -3,7 +3,7 @@ sys.path.insert(0, os.environ['PROJECT_ROOT'])
 
 import unittest
 import shutil
-from FaissOepia.carga import carga as carga
+from FaissOPEIA.carga import carga as carga
 # from FaissOepia.ingesta import ingesta as ingesta
 
 class TestFaiss(unittest.TestCase):
