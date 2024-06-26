@@ -2,14 +2,14 @@ import sys, os
 sys.path.insert(0, os.environ['PROJECT_ROOT'])
 
 import unittest
-from Utiles import Prompts as promt
-from Utiles import Utiles as utls
+from OEPIA.Utiles import Prompts as prompts
+from OEPIA.Utiles import Utiles as utls
 
 # Clase de test
 class TestOepia(unittest.TestCase):
 
     def test_PROMPTTemplatePrincipalOEPIA(self):
-        self.assertEqual(len(promt.obtenerPROMPTTemplatePrincipalOEPIA() > 1), True)
+        self.assertEqual(len(prompts.obtenerPROMPTTemplatePrincipalOEPIA() > 1), True)
 
     def test_PROMPTTemplatePrincipalOEPIA(self):
         self.assertEqual(len(utls.obtenerPROMPTTemplatePrincipalOEPIA() > 1), True)
