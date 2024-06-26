@@ -6,7 +6,7 @@ import glob
 import unittest
 import shutil
 from FaissOPEIA.carga import carga as carga
-# from FaissOepia.ingesta import ingesta as ingesta
+
 
 class TestFaiss(unittest.TestCase):
 
