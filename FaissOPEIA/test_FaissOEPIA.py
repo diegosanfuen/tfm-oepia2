@@ -10,13 +10,13 @@ class TestFaiss(unittest.TestCase):
 
     def test_carga(self):
         try:
-            origen = os.environ['PROJECT_ROOT'] + "/FaissOEPIA/test/*"
-            destino = os.environ['PROJECT_ROOT'] + "/FaissOEPIA/db/"
+            origen = os.environ['PROJECT_ROOT'] + "/FaissOPEIA/test/*"
+            destino = os.environ['PROJECT_ROOT'] + "/FaissOPEIA/db/"
             shutil.copy(origen, destino)
             BDVect = carga()
             retriever = BDVect.getRetriver()
             assert 'retriever' in globals() or 'retriever' in locals()
-            os.remove(os.environ['PROJECT_ROOT'] + "/FaissOEPIA/db/*")
+            os.remove(os.environ['PROJECT_ROOT'] + "/FaissOPEIA/db/*")
         except:
             raise AssertionError
 
