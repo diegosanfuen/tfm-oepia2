@@ -16,6 +16,7 @@ class TestFaiss(unittest.TestCase):
             BDVect = carga()
             retriever = BDVect.getRetriver()
             assert 'retriever' in globals() or 'retriever' in locals()
+            os.remove(os.environ['PROJECT_ROOT'] + "/FaissOEPIA/db/*")
         except:
             raise AssertionError
 
