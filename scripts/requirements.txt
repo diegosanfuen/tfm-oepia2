@@ -11,4 +11,4 @@ langchainhub==0.1.17
 pdfplumber==0.11.0
 sumy==0.11.0
 pytest==8.2.2
-unittest
+unittest2
