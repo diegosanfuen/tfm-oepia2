@@ -10,7 +10,7 @@ class TestFaiss(unittest.TestCase):
 
     def test_carga(self):
         try:
-            origen = os.environ['PROJECT_ROOT'] + "/FaissOPEIA/test/*"
+            origen = os.environ['PROJECT_ROOT'] + "/FaissOPEIA/tests/*"
             destino = os.environ['PROJECT_ROOT'] + "/FaissOPEIA/db/"
             shutil.copy(origen, destino)
             BDVect = carga()
