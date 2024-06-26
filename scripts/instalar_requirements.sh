@@ -9,5 +9,8 @@ export PYTHONUNBUFFERED=1
 
 pip install -r $PROJECT_ROOT/scripts/requirements.txt
 
+echo "Ejecutamos tests"
+pytest $PROJECT_ROOT
+
 
 
