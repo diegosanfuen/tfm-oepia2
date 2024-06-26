@@ -1,6 +1,8 @@
 import sys, os
 sys.path.insert(0, os.environ['PROJECT_ROOT'])
 
+import glob
+
 import unittest
 import shutil
 from FaissOPEIA.carga import carga as carga
@@ -10,9 +12,10 @@ class TestFaiss(unittest.TestCase):
 
     def test_carga(self):
         try:
-            origen = os.environ['PROJECT_ROOT'] + "/FaissOPEIA/tests/*.pkl"
+            origenes = os.environ['PROJECT_ROOT'] + "/FaissOPEIA/tests"
             destino = os.environ['PROJECT_ROOT'] + "/FaissOPEIA/db/"
-            shutil.copy(origen, destino)
+            for origen in glob.glob(origenes + "/*.pkl"):
+                shutil.copy(origen, destino)
             BDVect = carga()
             retriever = BDVect.getRetriver()
             assert 'retriever' in globals() or 'retriever' in locals()
