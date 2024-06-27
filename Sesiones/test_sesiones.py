@@ -1,10 +1,7 @@
 import sys, os
 sys.path.insert(0, os.environ['PROJECT_ROOT'])
 
-import glob
-
 import unittest
-import shutil
 from Sesiones.sesiones import ManejadorSesiones as ManejadorSesiones
 
 class TestSesiones(unittest.TestCase):
